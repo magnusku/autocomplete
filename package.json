@@ -1,7 +1,7 @@
 {
   "name": "autocomplete",
   "version": "1.0.0",
-  "description": "simple webcomponent that fetches list and filters it on typing",
+  "description": "simple webcomponent that fetches list and filters it on typing. In progress",
   "main": "index.html",
   "scripts": {
     "serve": "npm run startHttpServer & npm run startMockServer",
@@ -21,7 +21,7 @@
     "js",
     "autocomplete"
   ],
-  "author": "Magnus Kurtto",
+  "author": "magnusku",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/magnusku/autocomplete/issues"
