@@ -4,7 +4,9 @@
   "description": "simple webcomponent that fetches list and filters it on typing",
   "main": "index.html",
   "scripts": {
-    "serve": "http-server . && cd /mockserver && mockserver -p 8181 -m ."
+    "serve": "npm run startHttpServer & npm run startMockServer",
+    "startHttpServer": "http-server .",
+    "startMockServer": "mockserver -p 8181 -m ."
   },
   "repository": {
     "type": "git",
