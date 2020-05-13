@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-TYpe: application/json; charset=utf-8
+Access-Control-Allow-Origin: http://127.0.0.1:8080
+Access-Control_allow_Methods: GET
+
+
+["magnus","Claudia","Wilma","Emil","Astrid","Sid"]

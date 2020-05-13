@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Webcomponents</title>
+        <script src="MyCustomElement.js"></script>
+        <script src="shadowDOMAndSlots.js"></script>
+        <script src="p-bold-first.js"></script>
+        <script src="autocomplete.js"></script>
+    </head>
+    <body>
+
+        <style>
+            p {
+                color: red;
+            }
+        </style>
+        <my-custom-element></my-custom-element>
+        
+        <ua-input>
+            <span slot="slot1">Title:</span>
+        </ua-input>
+
+        <p-bold-first>test to see that it works</p-bold-first>
+        <p-bold-first>Another text with bold first letter</p-bold-first>
+
+        <p>A regular paragraph</p>
+
+        <ua-autocomplete 
+            title="Users" 
+            placeholder="Search"
+            url="http://localhost:8181/api/users">
+        </ua-autocomplete>
+    </body>
+</html>
