@@ -1,5 +1,7 @@
 # autocomplete
-Simple autocomplete input written in plain js
+Simple autocomplete input written in plain js.
+Fetches list from given url attribute and lets you filter the result
+by typing in the input.
 
 # Test/Develop
 - clone the repository
