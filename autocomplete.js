@@ -31,7 +31,7 @@
         </form>
     `;
 
-    window.customElements.define('ua-autocomplete', 
+    window.customElements.define('mk-autocomplete', 
 
     class AutoComplete extends HTMLElement {
         
