@@ -92,7 +92,7 @@
 
         addClickEventListener() {
             this.ul.addEventListener('click', (event) => {
-                if(event.target && event.target.classList.contains('item')) {
+                if (event.target && event.target.classList.contains('item')) {
                     this.input.value = event.target.innerText;
                     this.showList(false);
                 }
@@ -102,22 +102,23 @@
         addButtonClickListener() {
             this.button.addEventListener('click', () => {
                this.openDropdown();
-               if(this.isOpen) {
+               if (this.isOpen) {
                    this.visibleItems[0].focus();
                }
             });
         }
 
         openDropdown() {
-            if(this.isOpen) {
-                this.showList(false)
-            } else if (this.input.value.length > 0){
-                this.showMatchingListItems(this.input.value);
-                this.ul.firstChild.focus();
-            } else {
-                this.showList(true);
-            }
 
+            if (this.isOpen) {
+                if (this.input.value.length > 0) {
+                    this.showMatchingListItems(this.input.value);
+                } else {
+                    this.showList(true);
+                }
+            } else {
+                this.showList(false);
+            }
         }
 
         addInputEventListener() {
@@ -129,9 +130,9 @@
         showMatchingListItems(input) {
             this.showList(false);
 
-            if(input.length > 0) {                    
+            if (input.length > 0) {                    
                 this.ul.childNodes.forEach(child => {
-                    if(child.innerText.toLowerCase().indexOf(input.toLowerCase()) > -1) {
+                    if (child.innerText.toLowerCase().indexOf(input.toLowerCase()) > -1) {
                         child.style.display = 'block';
                         child.setAttribute('show', '');
                         this.isOpen = true;
@@ -151,7 +152,7 @@
 
                 const activeElement = this.shadowRoot.activeElement;    
 
-                if(!this.isOpen) this.openDropdown();
+                if (!this.isOpen) this.openDropdown();
 
                 switch (event.keyCode) {
                     case upArrow:
