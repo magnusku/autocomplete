@@ -9,8 +9,10 @@ by typing in the input.
 - Select with enter key.
 - Close dropdown with escape key.
 - Clear input with escape key.
+- Support for flat string array
+- Support for object array by defining label value attributes
 
-# Test/Develop
+# Try it out
 - clone the repository
 - run npm i (installs dev dependenices)
 - npm run serve (Starts an development server and mock api)
