@@ -215,14 +215,10 @@
                     let list, label, value;
                     
                     list = JSON.parse(request.responseText);
-
-                    console.log(list);
                     
                     if (this.hasAttribute('label') && this.hasAttribute('value')) {
                         label = this.getAttribute('label');
                         value = this.getAttribute('value');
-
-                        console.log(label, value);
                     }
 
                     list.sort().forEach(item => {
