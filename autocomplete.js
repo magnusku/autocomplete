@@ -7,7 +7,9 @@
                 width: 200px;
             }
             ul {
-                border: 1px solid #ddd;
+                position: absolute;
+                z-index: 2;
+                width: 200px;
                 list-style-type: none;
                 padding: 0;
                 margin: 0;
@@ -16,8 +18,13 @@
             li {
                 text-align: center;
                 background-color: #fff;
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #ddd;
             }
-            li.item:nth-child(2) {
+            li:last-child {
+                border-bottom: 1px solid #ddd;
+            }
+            li:nth-child(2) {
                 background-color: #eee;
             }
 
@@ -83,7 +90,6 @@
             this.doRequest();
         }
 
-
         addClickEventListener() {
             this.ul.addEventListener('click', (event) => {
                 if(event.target && event.target.classList.contains('item')) {
@@ -96,6 +102,9 @@
         addButtonClickListener() {
             this.button.addEventListener('click', () => {
                this.openDropdown();
+               if(this.isOpen) {
+                   this.visibleItems[0].focus();
+               }
             });
         }
 
@@ -111,14 +120,11 @@
 
         }
 
-
         addInputEventListener() {
             this.input.addEventListener('input', (event) => {
                 this.showMatchingListItems(event.target.value);
             });
         }
-
-
 
         showMatchingListItems(input) {
             this.showList(false);
@@ -142,7 +148,6 @@
                     downArrow = 40, 
                     enter = 13,
                     esc = 27;
-
 
                 const activeElement = this.shadowRoot.activeElement;    
 
