@@ -4,4 +4,4 @@ Access-Control-Allow-Origin: http://127.0.0.1:8080
 Access-Control_allow_Methods: GET
 
 
-["bananas","apples","oranges","cars", 123, -12, false, null, undefined]
+["banana","apple","orange","pear","melon","kiwi"]
