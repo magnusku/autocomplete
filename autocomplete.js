@@ -95,54 +95,106 @@
 
         addButtonClickListener() {
             this.button.addEventListener('click', () => {
-                this.showList(!this.isOpen);
-                this.ul.firstChild.focus();
+               this.openDropdown();
             });
         }
 
+        openDropdown() {
+            if(this.isOpen) {
+                this.showList(false)
+            } else if (this.input.value.length > 0){
+                this.showMatchingListItems(this.input.value);
+                this.ul.firstChild.focus();
+            } else {
+                this.showList(true);
+            }
+
+        }
+
+
         addInputEventListener() {
-            this.input.addEventListener('input', (e) => {
-                this.showList(false);
-
-                if(e.target.value.length > 0) {                    
-                    this.ul.childNodes.forEach(child => {
-                        if(child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1) {
-                            child.style.display = 'block';
-                            this.isOpen = true;
-                        }
-                    });
-                }
+            this.input.addEventListener('input', (event) => {
+                this.showMatchingListItems(event.target.value);
             });
+        }
 
-            this.shadowRoot.addEventListener('blur', () => {
-                this.showList(false);
-            });
+
+
+        showMatchingListItems(input) {
+            this.showList(false);
+
+            if(input.length > 0) {                    
+                this.ul.childNodes.forEach(child => {
+                    if(child.innerText.toLowerCase().indexOf(input.toLowerCase()) > -1) {
+                        child.style.display = 'block';
+                        child.setAttribute('show', '');
+                        this.isOpen = true;
+                    }
+                });
+
+                this.visibleItems = this.shadowRoot.querySelectorAll('li[show]');
+            }
         }
 
         addKeyboardListener() {
-            this.shadowRoot.addEventListener('keydown', (e) => {
+            this.shadowRoot.addEventListener('keydown', (event) => {
+                const upArrow = 38, 
+                    downArrow = 40, 
+                    enter = 13,
+                    esc = 27;
 
-                switch (e.keyCode) {
-                    case 38:
-                        if (this.shadowRoot.activeElement === (this.input || this.ul.firstChild || this.button)) {
+
+                const activeElement = this.shadowRoot.activeElement;    
+
+                if(!this.isOpen) this.openDropdown();
+
+                switch (event.keyCode) {
+                    case upArrow:
+                        if (activeElement === (this.input || this.visibleItems[0] || this.button)) {
                             break;
-                        } else if (this.shadowRoot.activeElement === this.ul.firstChild) {
+                        } else if (activeElement === this.visibleItems[0]) {
                             this.input.focus();
                         } else { 
-                            this.shadowRoot.activeElement.previousSibling.focus();
+                            for(let i = 0; i < this.visibleItems.length; i++) {
+                                if(activeElement === this.visibleItems[i]) {
+                                    this.visibleItems[--i].focus();
+                                    break;
+                                }
+                            }
                         }
                         break;
-                    case 40: 
-                        if (this.shadowRoot.activeElement == (this.input || this.button)) {
-                            this.showList(true)
-                            this.ul.firstChild.focus(); 
-                        
-                        } else if(this.shadowRoot.activeElement === this.ul.lastChild){ 
+                    case downArrow: 
+                        if(activeElement === this.visibleItems[this.visibleItems.length-1]) {
                             break;
+                        } else if (activeElement == (this.input || this.button)) {
+                            this.visibleItems[0].focus();
                         } else {
-                            this.shadowRoot.activeElement.nextSibling.focus(); 
+
+                            for(let i = 0; i < this.visibleItems.length; i++) {
+                                if(activeElement === this.visibleItems[i]) {
+                                    this.visibleItems[++i].focus();
+                                    break;
+                                }
+                            }
                         }
-                    break;
+                        break;
+                    case enter:
+                        if(activeElement && activeElement.tagName === 'LI') {
+                            this.input.focus();
+                            this.showList(false);
+                            this.input.value = activeElement.innerText;
+                        }
+                        break;
+                    case esc: 
+                        if(activeElement === this.input ) {
+                            this.input.value = '';
+                        } 
+                        if (this.isOpen) {
+                            this.showList(false);
+                        }
+                        this.input.focus();
+                        break;
+                    default: this.input.focus();
                     }
             });
         }
@@ -155,7 +207,7 @@
                 const STATUS_OK = request.status >= 200 && request.status < 300;
                 if(STATUS_OK) {
                     const list = JSON.parse(request.responseText);
-                    list.forEach(item => {
+                    list.sort().forEach(item => {
                         const li = document.createElement('li');
                         li.innerText = item;
                         li.classList.add('item');
@@ -176,8 +228,12 @@
         }
 
         showList(show) {
-            this.ul.childNodes.forEach(child => child.style.display = show ? 'block' : 'none');
-            this.isOpen = show;
+            this.ul.childNodes.forEach(child => {
+                child.style.display = show ? 'block' : 'none';
+                child[show ? 'setAttribute' : 'removeAttribute']('show', '');
+                this.isOpen = show;
+            });
+            this.visibleItems = this.shadowRoot.querySelectorAll('li[show]');
         }
     });
 
