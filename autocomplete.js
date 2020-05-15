@@ -3,26 +3,46 @@
     const template = document.createElement('template');
     template.innerHTML = `
         <style>
-            div:not(.item) {
+            div[role="combobox"] {
+                width: 200px;
+            }
+            ul {
                 border: 1px solid #ddd;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
             }
 
-            div.item {
+            li {
                 text-align: center;
                 background-color: #fff;
             }
-            div.item:nth-child(2) {
+            li.item:nth-child(2) {
                 background-color: #eee;
             }
 
-            div.item:hover {
-                background: green;
+            li:hover, li:active {
+                background: #ddd;
+            }
+
+            
+            input {
+                display: inline-block;
+                width: 180px;
+            }
+
+            button {
+                display: inline-block;
+                width: 15px;
+                margin: 0;
+                padding: 2;
             }
         </style>
 
-        <div>
+        <div role="combobox">
             <input id="input"/>
-            <div id="ul"></div>
+            <button>&#9660;</button>
+            <ul></ul>
         </div>
     `;
 
@@ -47,15 +67,19 @@
             this.shadowRoot.appendChild(template.content.cloneNode(true));
             this.list = [];
             
-            this.form = this.shadowRoot.querySelector('form');
+            this.combobox = this.shadowRoot.querySelector('[role=combobox]');
             this.input = this.shadowRoot.querySelector('input');
-            this.ul = this.shadowRoot.querySelector('#ul');
+            this.ul = this.shadowRoot.querySelector('ul');
+            this.button = this.shadowRoot.querySelector('button');
+
+            this.isOpen = false;
         }
         
         connectedCallback() {
             this.addInputEventListener();
             this.addClickEventListener();
-
+            this.addButtonClickListener();
+            this.addKeyboardListener();
             this.doRequest();
         }
 
@@ -64,28 +88,62 @@
             this.ul.addEventListener('click', (event) => {
                 if(event.target && event.target.classList.contains('item')) {
                     this.input.value = event.target.innerText;
-                    this.clearList();
+                    this.showList(false);
                 }
+            });
+        }
+
+        addButtonClickListener() {
+            this.button.addEventListener('click', () => {
+                this.showList(!this.isOpen);
+                this.ul.firstChild.focus();
             });
         }
 
         addInputEventListener() {
             this.input.addEventListener('input', (e) => {
-                this.clearList();
+                this.showList(false);
 
-                if(e.target.value.length > 0) {
-                    this.list
-                        .filter(item => String(item).toLowerCase().indexOf(e.target.value.toLowerCase()) > -1)
-                        .map(item => {
-                            console.log(item);
-                            let li = document.createElement('div');
-                            li.classList.add('item')
-                            li.innerText = item;
-                            return li;
-                        }).forEach(listItem => {
-                            this.ul.appendChild(listItem);
-                        });
+                if(e.target.value.length > 0) {                    
+                    this.ul.childNodes.forEach(child => {
+                        if(child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1) {
+                            child.style.display = 'block';
+                            this.isOpen = true;
+                        }
+                    });
                 }
+            });
+
+            this.shadowRoot.addEventListener('blur', () => {
+                this.showList(false);
+            });
+        }
+
+        addKeyboardListener() {
+            this.shadowRoot.addEventListener('keydown', (e) => {
+
+                switch (e.keyCode) {
+                    case 38:
+                        if (this.shadowRoot.activeElement === (this.input || this.ul.firstChild || this.button)) {
+                            break;
+                        } else if (this.shadowRoot.activeElement === this.ul.firstChild) {
+                            this.input.focus();
+                        } else { 
+                            this.shadowRoot.activeElement.previousSibling.focus();
+                        }
+                        break;
+                    case 40: 
+                        if (this.shadowRoot.activeElement == (this.input || this.button)) {
+                            this.showList(true)
+                            this.ul.firstChild.focus(); 
+                        
+                        } else if(this.shadowRoot.activeElement === this.ul.lastChild){ 
+                            break;
+                        } else {
+                            this.shadowRoot.activeElement.nextSibling.focus(); 
+                        }
+                    break;
+                    }
             });
         }
 
@@ -96,7 +154,15 @@
             request.onload = () => {
                 const STATUS_OK = request.status >= 200 && request.status < 300;
                 if(STATUS_OK) {
-                    this.list = JSON.parse(request.responseText);
+                    const list = JSON.parse(request.responseText);
+                    list.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerText = item;
+                        li.classList.add('item');
+                        li.setAttribute('tabIndex', '-1')
+                        li.style.display = 'none';
+                        this.ul.appendChild(li);
+                    });
                 }
             }
 
@@ -109,12 +175,9 @@
             }
         }
 
-        clearList() {
-            let child = this.ul.lastChild;            
-            while(child) {
-                this.ul.removeChild(this.ul.firstChild);
-                child = this.ul.lastChild;
-            }
+        showList(show) {
+            this.ul.childNodes.forEach(child => child.style.display = show ? 'block' : 'none');
+            this.isOpen = show;
         }
     });
 
