@@ -58,7 +58,7 @@
     class AutoComplete extends HTMLElement {
         
         static get observedAttributes() {
-            return ['placeholder'];
+            return ['placeholder', 'label', 'value'];
         }
         
         attributeChangedCallback(name, oldValue, newValue) {
@@ -211,14 +211,35 @@
             request.onload = () => {
                 const STATUS_OK = request.status >= 200 && request.status < 300;
                 if(STATUS_OK) {
-                    const list = JSON.parse(request.responseText);
+                    let list, label, value;
+                    
+                    list = JSON.parse(request.responseText);
+
+                    console.log(list);
+                    
+                    if (this.hasAttribute('label') && this.hasAttribute('value')) {
+                        label = this.getAttribute('label');
+                        value = this.getAttribute('value');
+
+                        console.log(label, value);
+                    }
+
                     list.sort().forEach(item => {
+
                         const li = document.createElement('li');
-                        li.innerText = item;
+
                         li.classList.add('item');
                         li.setAttribute('tabIndex', '-1')
                         li.style.display = 'none';
+                        
+                        if (typeof item === 'string') {
+                            li.innerText = item;
+                        } else {
+                            li.innerText = item[label];
+                            li.setAttribute('data-value', item[value])
+                        }
                         this.ul.appendChild(li);
+
                     });
                 }
             }
