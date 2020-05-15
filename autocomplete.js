@@ -3,10 +3,6 @@
     const template = document.createElement('template');
     template.innerHTML = `
         <style>
-            label {
-                display: block;
-            }
-
             div:not(.item) {
                 border: 1px solid #ddd;
             }
@@ -24,11 +20,10 @@
             }
         </style>
 
-        <form>
-            <label for="input">title:</label>
+        <div>
             <input id="input"/>
             <div id="ul"></div>
-        </form>
+        </div>
     `;
 
     window.customElements.define('mk-autocomplete', 
@@ -36,7 +31,7 @@
     class AutoComplete extends HTMLElement {
         
         static get observedAttributes() {
-            return ['title', 'placeholder'];
+            return ['placeholder'];
         }
         
         attributeChangedCallback(name, oldValue, newValue) {
@@ -109,9 +104,6 @@
         }
 
         applyAttributes() {
-            if (this.hasAttribute('title')) {
-                this.shadowRoot.querySelector('label').innerText = this.getAttribute('title');
-            }
             if (this.hasAttribute('placeholder')) {
                 this.shadowRoot.querySelector('input').setAttribute('placeholder', this.getAttribute('placeholder'));
             }
